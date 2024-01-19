@@ -1,0 +1,50 @@
+#startup --output_user_root=/tmp/bazel/output
+#startup --output_base=/tmp/bazel/output
+#build --symlink_prefix=.bazel/
+
+build:linux-x86_64 --platforms=//platforms:linux-x86_64
+build:linux-x86_64 --action_env=BAZEL_CXXOPTS="-std=c++20:-Werror:-Wall"
+test:linux-x86_64 --action_env=BAZEL_CXXOPTS=-std=c++20
+
+build:windows-x86_64 --platforms=//platforms:windows-x86_64
+build:windows-x86_64  --action_env=BAZEL_CXXOPTS="/std:c++20"
+test:windows-x86_64 --action_env=BAZEL_CXXOPTS="/std:c++20"
+
+build:asan --strip=never
+build:asan --copt -fsanitize=address
+build:asan --copt -DADDRESS_SANITIZER
+build:asan --copt -o1
+build:asan --copt -g
+build:asan --copt -fno-omit-frame-pointer
+build:asan --linkopt -fsanitize=address
+
+build:usan --strip=never
+build:usan --copt -fsanitize=undefined
+build:asan --copt -DUNDEFINED_SANITIZER
+build:usan --copt -fsanitize-link-c++-runtime
+build:usan --copt -fno-sanitize=vptr
+build:usan --copt -o1
+build:usan --copt -g
+build:usan --copt -fno-omit-frame-pointer
+build:usan --copt "-Wl,-no-allow-shlib-undefined"
+build:usan --linkopt -fsanitize=undefined
+build:ubsan --linkopt=-fsanitize-link-c++-runtime
+
+build:msan --strip=never
+build:msan --copt=-fsanitize=memory
+build:msan --copt=-O1
+build:msan --copt=-fsanitize-memory-track-origins
+build:msan --copt=-fsanitize-memory-use-after-dtor
+#build:msan --copt= use-of-uninitialized-value
+build:msan --copt=-fno-omit-frame-pointer
+build:msan --linkopt=-fsanitize=memory
+
+build:tsan --strip=never
+build:tsan --copt=-fsanitize=thread
+build:tsan --copt=-fno-omit-frame-pointer
+build:tsan --linkopt=-fsanitize=thread
+
+test --test_output=streamed
+test --cache_test_results=no
+test:-c dbg
+
