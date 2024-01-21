@@ -1,7 +1,7 @@
-#include "sha256.h"
+#include "security/sha256.hpp"
 #include <gtest/gtest.h>
 
-using namespace blockchain;
+using namespace common;
 
 TEST(sha256, checksum) {
   { // EMPTY

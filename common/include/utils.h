@@ -3,6 +3,7 @@
 #include "type_traits/is_container.h"
 #include <chrono>
 #include <cstdint>
+#include <cstring>
 #include <iomanip>
 #include <iostream>
 #include <istream>
@@ -11,21 +12,44 @@
 #include <streambuf>
 #include <utility>
 
-struct membuf : std::streambuf {
-  membuf(const char *base, size_t size) {
+struct imembuf : std::streambuf {
+  imembuf(const char *base, size_t size) {
     char *p(const_cast<char *>(base));
-    this->setg(p, p, p + size);
+    setg(p, p, p + size);
   }
 };
 
-struct imemstream : virtual membuf, std::istream {
-  imemstream(const char *base, size_t size)
-      : membuf(base, size), std::istream(static_cast<std::streambuf *>(this)) {}
+struct omembuf : std::streambuf {
+  omembuf(const char *base, size_t size) {
+    char *p(const_cast<char *>(base));
+    setp(p, p + size);
+  }
 };
 
-struct omemstream : virtual membuf, std::ostream {
+struct iomembuf : std::streambuf {
+  iomembuf(const char *base, size_t size) {
+    char *p(const_cast<char *>(base));
+    setg(p, p, p + size);
+    setp(p, p + size);
+  }
+};
+
+struct imemstream : virtual imembuf, std::istream {
+  imemstream(const char *base, size_t size)
+      : imembuf(base, size), std::istream(static_cast<std::streambuf *>(this)) {
+  }
+};
+
+struct omemstream : virtual omembuf, std::ostream {
   omemstream(const char *base, size_t size)
-      : membuf(base, size), std::ostream(static_cast<std::streambuf *>(this)) {}
+      : omembuf(base, size), std::ostream(static_cast<std::streambuf *>(this)) {
+  }
+};
+
+struct iomemstream : virtual iomembuf, std::ostream {
+  iomemstream(const char *base, size_t size)
+      : iomembuf(base, size),
+        std::ostream(static_cast<std::streambuf *>(this)) {}
 };
 
 inline std::ostream &print_bytes(std::ostream &os, const uint8_t *data,
@@ -68,7 +92,6 @@ static inline uint64_t time_since_epoch() {
 extern std::random_device g_random_device;
 extern std::mt19937 g_random_number_engine;
 
-namespace blockchain {
 namespace utils {
 template <typename IntType> inline static int get_random_number() {
 
@@ -88,5 +111,13 @@ std::chrono::duration<double, Period> run_duration(Callable &callable,
 
   return (t1 - t0);
 }
+
+static inline const char *basename(const char *path) {
+#ifdef _WIN32
+  const char *p = strrchr(path, '/');
+#else
+  const char *p = strrchr(path, '/');
+#endif
+  return p ? p + 1 : (char *)path;
+}
 } // namespace utils
-} // namespace blockchain

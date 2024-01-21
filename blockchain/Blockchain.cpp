@@ -1,5 +1,5 @@
 #include "Blockchain.hpp"
-#include "common/net/io.h"
+#include "net/io.h"
 #include <cstdint>
 #include <cstring>
 #include <memory>
@@ -8,8 +8,8 @@
 
 namespace blockchain {
 
-using namespace security;
 using namespace common;
+using namespace common::security;
 
 void Blockchain::serialize(std::ostream &os) const {
 

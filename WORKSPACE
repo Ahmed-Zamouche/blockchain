@@ -5,10 +5,17 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 http_archive(
   name = "gtest",
   urls = ["https://github.com/google/googletest/archive/refs/tags/release-1.12.1.tar.gz"],
-  #urls = ["http://127.0.0.1:8080/google/googletest/archive/refs/tags/googletest-release-1.12.1.tar.gz"],
   strip_prefix = "googletest-release-1.12.1",
   sha256 = "81964fe578e9bd7c94dfdb09c8e4d6e6759e19967e397dbea48d1c10e45d0df2",
   build_file = "@//third-party/gtest:BUILD",
+)
+
+http_archive(
+  name = "spdlog",
+  urls = ["https://github.com/gabime/spdlog/archive/refs/tags/v1.13.0.tar.gz"],
+  strip_prefix = "spdlog-1.13.0",
+  sha256 = "534f2ee1a4dcbeb22249856edfb2be76a1cf4f708a20b0ac2ed090ee24cfdbc9",
+  build_file = "@//third-party/spdlog:BUILD",
 )
 
 

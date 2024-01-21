@@ -1,12 +1,12 @@
 #include "Blockchain.hpp"
-#include "common/utils.h"
+#include "utils.h"
 #include <cstddef>
 #include <gtest/gtest.h>
 #include <iostream>
 #include <sstream>
 
 using namespace blockchain;
-using namespace blockchain::security;
+using namespace common::security;
 
 TEST(Blockchain, blockchain) {
   constexpr size_t SIZE = 4;
@@ -66,7 +66,7 @@ TEST(Blockchain, blockchain_deserialize) {
                       4 +                   //     id
                       8 +                   //     nonce
                       8 +                   //     time
-                      SHA256::DIGEST_SIZE + //     prev_hash
+                      Sha256::DIGEST_SIZE + //     prev_hash
                       13                    //     data
                       ) *
                       (SIZE + 1)));

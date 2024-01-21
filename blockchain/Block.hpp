@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ISerializable.hpp"
-#include "blockchain/common/utils.h"
-#include "common/security/sha256.h"
+#include "security/sha256.hpp"
+#include "utils.h"
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -72,7 +72,6 @@ public:
     return *this;
   }
   virtual ~Block() = default;
-
   void calc();
   void mine(size_t difficulty);
   bool is_valid() const;
@@ -84,17 +83,20 @@ public:
   uint32_t get_version() const { return _version; }
   const Block *get_prev_block() const { return _prev_block; }
   std::string get_prev_hash_str() const {
-    return _prev_block ? _prev_block->get_hash_str() : security::ZEROS_STR;
+    return _prev_block ? _prev_block->get_hash_str()
+                       : common::security::ZEROS_STR;
   }
   const uint8_t *get_prev_hash() const {
-    return _prev_block ? _prev_block->get_hash().data() : security::ZEROS;
+    return _prev_block ? _prev_block->get_hash().data()
+                       : common::security::ZEROS;
   }
   const std::string &get_data() const { return _data; }
   std::string &get_data() { return _data; }
-  const std::array<uint8_t, security::SHA256::DIGEST_SIZE> &get_hash() const {
+  const std::array<uint8_t, common::security::Sha256::DIGEST_SIZE> &
+  get_hash() const {
     return _hash;
   }
-  std::array<uint8_t, security::SHA256::DIGEST_SIZE> &get_hash() {
+  std::array<uint8_t, common::security::Sha256::DIGEST_SIZE> &get_hash() {
     return _hash;
   }
   std::string get_hash_str() const;
@@ -108,15 +110,16 @@ public:
   void set_data(std::string &&data) { _data = std::move(data); }
   void set_data_size(size_t size) { _data_size = size; }
   void set_hash(const uint8_t *data, size_t size) {
-    assert(size == security::SHA256::DIGEST_SIZE);
+    assert(size == common::security::Sha256::DIGEST_SIZE);
     std::copy_n(data, size, _hash.begin());
   }
 
-  void
-  set_hash(const std::array<uint8_t, security::SHA256::DIGEST_SIZE> &hash) {
+  void set_hash(
+      const std::array<uint8_t, common::security::Sha256::DIGEST_SIZE> &hash) {
     _hash = hash;
   }
-  void set_hash(std::array<uint8_t, security::SHA256::DIGEST_SIZE> &&hash) {
+  void
+  set_hash(std::array<uint8_t, common::security::Sha256::DIGEST_SIZE> &&hash) {
     _hash = std::move(hash);
   }
 
@@ -137,8 +140,8 @@ private:
   Block *_prev_block;
   std::string _data;
   size_t _data_size{static_cast<size_t>(-1)}; // used for deserialize
-  std::array<uint8_t, security::SHA256::DIGEST_SIZE> _hash;
-  security::SHA256 _sha256{};
+  std::array<uint8_t, common::security::Sha256::DIGEST_SIZE> _hash;
+  common::security::Sha256 *_sha256{nullptr};
 };
 
 inline bool operator==(const Block &lhs, const Block &rhs) {

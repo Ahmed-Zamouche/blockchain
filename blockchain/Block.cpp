@@ -1,6 +1,6 @@
 #include "Block.hpp"
-#include "common/net/io.h"
-#include "common/type_traits/type_traits.h"
+#include "net/io.h"
+#include "type_traits/type_traits.h"
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
@@ -11,12 +11,12 @@
 
 namespace blockchain {
 
-using namespace security;
+using namespace common::security;
 using namespace common;
 
 bool Block::is_valid() const {
 
-  SHA256 sha256{};
+  Sha256 sha256{};
 
   sha256.init();
   sha256.update(reinterpret_cast<const uint8_t *>(&_id), sizeof(_id));
@@ -25,17 +25,17 @@ bool Block::is_valid() const {
                 sizeof(_time_since_epoch));
   sha256.update(reinterpret_cast<const uint8_t *>(
                     _prev_block ? _prev_block->get_hash().data() : ZEROS),
-                SHA256::DIGEST_SIZE);
+                Sha256::DIGEST_SIZE);
   sha256.update(reinterpret_cast<const uint8_t *>(_data.data()), _data.size());
 
-  uint8_t hash[SHA256::DIGEST_SIZE];
+  uint8_t hash[Sha256::DIGEST_SIZE];
   sha256.final(hash);
-  return std::memcmp(_hash.data(), hash, SHA256::DIGEST_SIZE) == 0;
+  return std::memcmp(_hash.data(), hash, Sha256::DIGEST_SIZE) == 0;
 }
 
 void Block::calc() {
 
-  SHA256 sha256{};
+  Sha256 sha256{};
 
   sha256.init();
   sha256.update(reinterpret_cast<const uint8_t *>(&_id), sizeof(_id));
@@ -44,7 +44,7 @@ void Block::calc() {
                 sizeof(_time_since_epoch));
   sha256.update(reinterpret_cast<const uint8_t *>(
                     _prev_block ? _prev_block->get_hash().data() : ZEROS),
-                SHA256::DIGEST_SIZE);
+                Sha256::DIGEST_SIZE);
   sha256.update(reinterpret_cast<const uint8_t *>(_data.data()), _data.size());
   sha256.final(_hash.data());
 }
@@ -66,7 +66,7 @@ void Block::serialize(std::ostream &os) const {
   net::io::write(os, "id        ", _id);
   net::io::write(os, "nonce     ", _nonce);
   net::io::write(os, "time      ", _time_since_epoch);
-  net::io::write(os, "hash      ", _hash.data(), SHA256::DIGEST_SIZE);
+  net::io::write(os, "hash      ", _hash.data(), Sha256::DIGEST_SIZE);
   net::io::write(os, "data      ", _data.data(), _data.size());
 }
 
@@ -83,7 +83,7 @@ void Block::deserialize(std::istream &is) {
   net::io::read(is, "id        ", _id);
   net::io::read(is, "nonce     ", _nonce);
   net::io::read(is, "time      ", _time_since_epoch);
-  net::io::read(is, "hash      ", _hash.data(), SHA256::DIGEST_SIZE);
+  net::io::read(is, "hash      ", _hash.data(), Sha256::DIGEST_SIZE);
 
   {
     assert(_data_size != static_cast<size_t>(-1));
@@ -125,7 +125,7 @@ std::string Block::to_json() const {
   oss << ", \"prev_hash\": \"";
   const uint8_t *prev_hash =
       _prev_block ? _prev_block->get_hash().data() : ZEROS;
-  for (size_t i = 0; i < SHA256::DIGEST_SIZE; i++) {
+  for (size_t i = 0; i < Sha256::DIGEST_SIZE; i++) {
     oss << std::hex << std::setw(2) << std::setfill('0')
         << static_cast<int>(prev_hash[i]);
   }

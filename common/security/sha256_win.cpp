@@ -1,4 +1,4 @@
-#include "sha256_win.hpp"
+#include "security/sha256.hpp"
 #include <cstdint>
 #include <cstring>
 
@@ -26,10 +26,8 @@
            ((std::uint32_t) * ((str) + 0) << 24);                              \
   }
 
-namespace blockchain {
-namespace security {
-
-const std::uint32_t SHA256::sha256_k[64] = {
+namespace {
+const std::uint32_t sha256_k[64] = {
     0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1,
     0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
     0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786,
@@ -42,7 +40,15 @@ const std::uint32_t SHA256::sha256_k[64] = {
     0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208,
     0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2};
 
-void SHA256::transform(const std::uint8_t *message, std::size_t block_nb) {
+constexpr size_t SHA224_256_BLOCK_SIZE = (512 / 8);
+
+std::uint8_t m_block[2 * SHA224_256_BLOCK_SIZE];
+} // namespace
+
+namespace common {
+namespace security {
+
+void Sha256::transform(const std::uint8_t *message, std::size_t block_nb) {
   std::uint32_t w[64];
   std::uint32_t wv[8];
   std::uint32_t t1, t2;
@@ -79,7 +85,7 @@ void SHA256::transform(const std::uint8_t *message, std::size_t block_nb) {
   }
 }
 
-void SHA256::init() {
+void Sha256::init() {
   m_h[0] = 0x6a09e667;
   m_h[1] = 0xbb67ae85;
   m_h[2] = 0x3c6ef372;
@@ -92,7 +98,7 @@ void SHA256::init() {
   m_tot_len = 0;
 }
 
-void SHA256::update(const std::uint8_t *message, std::size_t len) {
+void Sha256::update(const std::uint8_t *message, std::size_t len) {
   std::size_t block_nb;
   std::size_t new_len, rem_len, tmp_len;
   const std::uint8_t *shifted_message;
@@ -114,7 +120,7 @@ void SHA256::update(const std::uint8_t *message, std::size_t len) {
   m_tot_len += (block_nb + 1) << 6;
 }
 
-void SHA256::final(std::uint8_t *digest) {
+void Sha256::final(std::uint8_t *digest) {
   std::size_t block_nb;
   std::size_t pm_len;
   std::size_t len_b;
@@ -133,4 +139,4 @@ void SHA256::final(std::uint8_t *digest) {
 }
 
 } // namespace security
-} // namespace blockchain
+} // namespace common

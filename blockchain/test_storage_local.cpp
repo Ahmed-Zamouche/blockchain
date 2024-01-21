@@ -2,13 +2,12 @@
 #include "StorageLocal.hpp"
 #include <cstdint>
 #include <cstring>
-#include <filesystem>
 #include <fstream>
 #include <gtest/gtest.h>
 
 using namespace blockchain;
 using namespace blockchain::storage;
-using namespace blockchain::security;
+using namespace common::security;
 
 TEST(StorageLocal, storage_save) {
   constexpr size_t SIZE = 4;

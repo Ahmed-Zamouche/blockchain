@@ -1,16 +1,14 @@
 #include "Block.hpp"
-#include "common/security/sha256.h"
-#include "common/utils.h"
+#include "security/sha256.hpp"
+#include "utils.h"
 #include <array>
-#include <chrono>
 #include <functional>
 #include <gtest/gtest.h>
-#include <ratio>
 #include <type_traits>
 #include <vector>
 
 using namespace blockchain;
-using namespace blockchain::security;
+using namespace common::security;
 
 template <typename T,
           typename std::enable_if_t<std::is_fundamental<T>::value, bool> = true>
@@ -32,7 +30,7 @@ void insert(std::vector<uint8_t> &vec, const uint8_t *arr, size_t size) {
 TEST(Block, DISABLED_block_duration) {
   Block block{
       0, {'G', 'e', 'n', 'e', 's', 'i', 's', ' ', 'B', 'l', 'o', 'c', 'k'}};
-  std::array<uint8_t, SHA256::DIGEST_SIZE> hash = {
+  std::array<uint8_t, Sha256::DIGEST_SIZE> hash = {
       0x00, 0x00, 0x00, 0xdc, 0x66, 0x99, 0x64, 0xa0, 0x96, 0xe8, 0x14,
       0x56, 0x1e, 0x35, 0x75, 0xbc, 0x8c, 0x21, 0xc2, 0xcf, 0x27, 0x9b,
       0xa9, 0x09, 0x09, 0xba, 0xc0, 0x30, 0xe2, 0x8e, 0xd3, 0x20};
@@ -66,7 +64,7 @@ TEST(Block, DISABLED_block_duration) {
 TEST(Block, block_mine) {
   Block block{
       0, {'G', 'e', 'n', 'e', 's', 'i', 's', ' ', 'B', 'l', 'o', 'c', 'k'}};
-  std::array<uint8_t, SHA256::DIGEST_SIZE> hash = {
+  std::array<uint8_t, Sha256::DIGEST_SIZE> hash = {
       0x00, 0xf3, 0x95, 0x6d, 0xba, 0xe1, 0xe0, 0x42, 0x34, 0x5c, 0xc9,
       0x99, 0x9c, 0x60, 0xbb, 0x07, 0x20, 0xf7, 0xb3, 0xf5, 0xec, 0x62,
       0xc1, 0x7a, 0xc7, 0xdf, 0x81, 0xb1, 0xfe, 0x82, 0x0a, 0xa8};
@@ -92,8 +90,8 @@ TEST(Block, block_mine) {
     insert(vec, ZEROS, sizeof(ZEROS));
     insert(vec, data);
     {
-      std::array<uint8_t, SHA256::DIGEST_SIZE> digest{};
-      SHA256 ctx = SHA256();
+      std::array<uint8_t, Sha256::DIGEST_SIZE> digest{};
+      Sha256 ctx = Sha256();
       ctx.init();
       ctx.update(vec.data(), vec.size());
       ctx.final(digest.data());
@@ -157,7 +155,7 @@ TEST(Block, block_is_valid) {
 
   {
     auto hash = block.get_hash();
-    block.set_hash(ZEROS, SHA256::DIGEST_SIZE);
+    block.set_hash(ZEROS, Sha256::DIGEST_SIZE);
     EXPECT_FALSE(block.is_valid());
     block.set_hash(std::move(hash));
     EXPECT_TRUE(block.is_valid());

@@ -21,10 +21,10 @@ cc_library(
   deps = [
     ":base", 
     ":interfaces",
-    "//blockchain/common:utils",
-    "//blockchain/common/net:net",
-    "//blockchain/common/type_traits:type_traits",
-    "//blockchain/common/security:sha256"
+    "//common:utils",
+    "//common/include/net:net",
+    "//common/include/type_traits:type_traits",
+    "//common/security:sha256"
   ],
 )
 
@@ -33,7 +33,7 @@ cc_test(
   srcs = ["test_block.cpp"],
   deps = [
     ":block",
-    "//blockchain/common:utils",
+    "//common:utils",
     "@gtest//:main",
   ],
 )
@@ -53,8 +53,8 @@ cc_test(
   srcs = ["test_blockchain.cpp"],
   deps = [
     ":blockchain",
-    "//blockchain/common:utils",
-    "//blockchain/common/type_traits:type_traits",
+    "//common:utils",
+    "//common/include/type_traits:type_traits",
     "@gtest//:main",
   ],
 )
@@ -71,8 +71,8 @@ cc_test(
   name = "test_storage_local",
   srcs = ["test_storage_local.cpp",],
   deps = [
-    "//blockchain/common:utils",
-    "//blockchain/common/security:sha256",
+    "//common:utils",
+    "//common/security:sha256",
     ":interfaces",
     ":blockchain",
     ":storage_local",

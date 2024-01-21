@@ -1,4 +1,4 @@
-load("@rules_cc//cc:defs.bzl", "cc_test", "cc_library")
+load("@rules_cc//cc:defs.bzl", "cc_library")
 
 cc_library(
   name = "net",
@@ -6,7 +6,7 @@ cc_library(
     "byteorder.h",
     "io.h",
   ],
-  srcs = [],
+  deps = ["//common/include:top"],
   visibility = ["//visibility:public"],
 )
 

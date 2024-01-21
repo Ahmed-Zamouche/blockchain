@@ -75,9 +75,4 @@ inline std::ostream &operator<<(std::ostream &os,
   return os << blockchain.to_string();
 }
 
-class BlockchainManager {
-public:
-private:
-};
-
 } // namespace blockchain
