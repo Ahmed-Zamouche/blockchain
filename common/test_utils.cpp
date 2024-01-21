@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 
 TEST(Utils, imemstream) {
-  uint8_t buffer[256];
+  uint8_t buffer[256]{};
   for (size_t i = 0; i < sizeof(buffer); i++) {
     buffer[i] = (uint8_t)i;
   }
@@ -18,7 +18,7 @@ TEST(Utils, imemstream) {
 }
 
 TEST(Utils, omemstream) {
-  uint8_t buffer[256];
+  uint8_t buffer[256]{};
 
   omemstream omems{(char *)buffer, sizeof(buffer)};
 
