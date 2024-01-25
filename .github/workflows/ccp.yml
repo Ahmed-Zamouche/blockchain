@@ -1,0 +1,11 @@
+name: C/C++ CI
+on: [push]
+jobs:
+  build:
+    runs-on: debian-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: build
+      run: bazel build //...
+    - name: test
+      run:  bazel test //...
